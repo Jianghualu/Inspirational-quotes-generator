@@ -17,6 +17,7 @@ import {
   QuoteButton,
   QuoteButtonText,
 } from "@/components/QuoteGenerator/QuoteGeneratorElements";
+import QuoteGeneratorModal from '@/components/QuoteGenerator'
 
 //Assets:
 import Moon from "../assets/moon.png";
@@ -25,6 +26,7 @@ import Fireworks1 from "../assets/firework1.png";
 // import { API } from 'aws-amplify';
 import { GraphQLResult, generateClient } from 'aws-amplify/api';
 import { quotesQueryName } from "@/src/graphql/queries";
+// import { QuoteButton } from '../components/QuoteGenerator/QuoteGeneratorElements';
 
 //interface for our DynamoDb object
 interface UpdateQuoteInfoData {
@@ -49,6 +51,10 @@ function isGraphQLResultForquotesQueryName(response: any): response is GraphQLRe
 
 export default function Home() {
   const [numberOfQuotes, setNumberOfQuotes] = useState<Number | null>(0);
+  const [openGenerator, setOpenGenerator] = useState(false);
+  const [processingQuote, setProcessingQuote] = useState(false);
+  const [quoteReceived, setQuoteReceived] = useState<String | null>(null);
+
   const client = generateClient();
   // Function to fetch our DynamoDB object (quotes generated)
   const updateQuoteInfo = async () => {
@@ -85,6 +91,29 @@ export default function Home() {
     updateQuoteInfo();
   }, [])
 
+  //Function for quotegenerator modal
+  const handleCloseGenerator = () => {
+    setOpenGenerator(false);
+  }
+
+  const handleOpenGenerator = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setOpenGenerator(true);
+    setProcessingQuote(true);
+
+    try{
+       // Run Lambda Function
+       setTimeout(() => {
+        setProcessingQuote(false);
+      }, 3000);
+
+    }
+    catch(error){
+      console.log('error gernerating quote: ', error);
+      setProcessingQuote(false);
+    }
+  }
+
 
   return (
     <>
@@ -97,7 +126,16 @@ export default function Home() {
       {/* Backgrounds */}
       <GradientBackgroundCon>
         {/* Quote Generator Modal Pop*/}
-        {/* <QuoteGeneratorModal></QuoteGeneratorModal> */}
+        <QuoteGeneratorModal
+        open={openGenerator}
+        close={handleCloseGenerator}
+        processingQuote={processingQuote}
+        setProcessingQuote={setProcessingQuote}
+        quoteReceived={quoteReceived}
+        setQuoteReceived={setQuoteReceived}
+        >
+          
+        </QuoteGeneratorModal>
 
         {/* Quote Generator */}
         <QuoteGeneratorCon>
@@ -118,7 +156,7 @@ export default function Home() {
             </QuoteGeneratorSubTitle>
             <QuoteButton>
               <QuoteButtonText 
-              // onClick={null}
+              onClick={handleOpenGenerator}
               >
                 Make a Quote
               </QuoteButtonText>
