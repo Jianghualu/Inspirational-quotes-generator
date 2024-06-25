@@ -91,7 +91,7 @@ async function handler(event) {
         if (newText !== "") {
           tSpanElements += `<tspan x="${width / 2}" dy="1.2em">${newText}</tspan>`;
         }
-        // console.log(tSpanElements);
+        console.log(tSpanElements);
       
         //Construct the SVG
         const svgImage = `
@@ -112,7 +112,7 @@ async function handler(event) {
                 font-weight: bold;
                 fill: lightgrey;
                 text-anchor: middle;
-                font-family: Verdana;
+                font-family: Roboto;
               }
             </style>
             <g>
@@ -121,7 +121,7 @@ async function handler(event) {
                 id="lastLineOfQuote"
                 x="375"
                 y="120"
-                font-family="Verdana"
+                font-family:"Roboto"
                 font-size="35"
                 fill="white"
                 text-anchor="middle"
@@ -143,7 +143,7 @@ async function handler(event) {
           "backgrounds/Dark-Ocean.png",
           "backgrounds/MegaTron.png",
           "backgrounds/Dusk.png",
-          "backgrounds/honey-Dew.png",
+          "backgrounds/Honey-Dew.png",
           "backgrounds/Dark-Skies.png",
           "backgrounds/Orca.png",
           "backgrounds/Sha-la-la.png",
@@ -153,10 +153,11 @@ async function handler(event) {
         const selectBackgroundImages = backgroundImages[randomId];
       
         //Composite text and background together
-        // const timestamp = new Date().toLocaleTimeString().replace(/[^\d]/g, "");
+        const timestamp = new Date().toLocaleTimeString().replace(/[^\d]/g, "");
         const svgBuffer = Buffer.from(svgImage);
         
-        const imagePath = join('/tmp', 'quote-card.png');
+        // const imagePath = '/tmp' + '/quote-card.png';
+        const imagePath = path.join('/tmp', 'quote-card.png');
         const image = await sharp(selectBackgroundImages)
           .composite([
             {
@@ -174,7 +175,6 @@ async function handler(event) {
           } catch (error) {
             console.log('error updating quote object in DynamoDB', error)
           }
-
           return {
             statusCode: 200,
         //  Uncomment below to enable CORS requests
@@ -184,7 +184,7 @@ async function handler(event) {
             //  "Access-Control-Allow-Headers": "*"
          },
             // body: JSON.stringify('Hello from Lambda!'),
-            body: readFileSync(imagePath).toString('base64'),
+            body: fs.readFileSync(imagePath).toString('base64'),
             isBase64Encoded: true,
         };
       }

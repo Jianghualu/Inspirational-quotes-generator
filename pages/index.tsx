@@ -25,8 +25,17 @@ import Fireworks from "../assets/fireworks.png";
 import Fireworks1 from "../assets/firework1.png";
 // import { API } from 'aws-amplify';
 import { GraphQLResult, generateClient } from 'aws-amplify/api';
-import { quotesQueryName } from "@/src/graphql/queries";
+import { generateAQuote, quotesQueryName } from "@/src/graphql/queries";
 // import { QuoteButton } from '../components/QuoteGenerator/QuoteGeneratorElements';
+
+//interface for appsync <> lambda JSON response
+interface GenerateAQuoteData {
+  generateAQuote: {
+    statusCode: number;
+    headers: { [key: string]: string };
+    body: string;
+  }
+}
 
 //interface for our DynamoDb object
 interface UpdateQuoteInfoData {
@@ -102,10 +111,35 @@ export default function Home() {
     setProcessingQuote(true);
 
     try{
-       // Run Lambda Function
+      //  // Run Lambda Function
+      // const runFunction = "runFunction";
+      // const runFunctionStringified = JSON.stringify(runFunction);
+      // const response = await client.graphql<GenerateAQuoteData>({
+      //   query: generateAQuote,
+      //   // authMode: "AWS_IAM",
+      //   variables: {
+      //     input: runFunctionStringified,
+      //   },
+      // });
+      // const responseStringified = JSON.stringify(response);
+      // const responseReStringified = JSON.stringify(responseStringified);
+      // const bodyIndex = responseReStringified.indexOf("body=") + 5;
+      // const bodyAndBase64 = responseReStringified.substring(bodyIndex);
+      // const bodyArray = bodyAndBase64.split(",");
+      // const body = bodyArray[0];
+      // console.log(body);
+      // setQuoteReceived(body);
+
+      // //End State:
+      // setProcessingQuote(false);
+
+      // //Fetch if any new quotes were generated from counter
+      // updateQuoteInfo();
+
        setTimeout(() => {
         setProcessingQuote(false);
       }, 3000);
+      
 
     }
     catch(error){
